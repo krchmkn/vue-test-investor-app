@@ -1,6 +1,5 @@
 <template>
   <div>
-    DeskTop
   </div>
 </template>
 

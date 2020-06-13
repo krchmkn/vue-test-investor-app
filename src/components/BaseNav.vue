@@ -6,20 +6,16 @@
       clipped
     >
       <v-list dense>
-        <v-list-item link to="/">
+        <v-list-item
+          v-for="(item, i) in menuItems"
+          :key="i" link
+          :to="item.to"
+        >
           <v-list-item-action>
-            <v-icon>mdi-view-dashboard</v-icon>
+            <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>Desktop</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item link to="/transactions">
-          <v-list-item-action>
-            <v-icon>mdi-trending-up</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Transactions</v-list-item-title>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -30,6 +26,7 @@
       clipped-left
     >
       <v-app-bar-nav-icon @click.stop="toggleMenu"></v-app-bar-nav-icon>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
     </v-app-bar>
   </div>
 </template>
@@ -40,7 +37,24 @@ export default {
   data() {
     return {
       isMenuOpen: false,
+      menuItems: [
+        {
+          to: '/',
+          icon: 'mdi-view-dashboard',
+          title: 'Desktop',
+        },
+        {
+          to: '/transactions',
+          icon: 'mdi-trending-up',
+          title: 'Transactions',
+        },
+      ],
     };
+  },
+  computed: {
+    title() {
+      return this.$route.name;
+    },
   },
   methods: {
     toggleMenu() {

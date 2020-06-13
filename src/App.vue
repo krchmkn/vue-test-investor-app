@@ -1,13 +1,9 @@
 <template>
   <v-app>
     <base-nav />
-
     <v-main>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <router-view/>
+      <v-container fluid>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
