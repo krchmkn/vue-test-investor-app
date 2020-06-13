@@ -17,8 +17,5 @@ export default {
   components: {
     BaseNav,
   },
-  created() {
-    this.$vuetify.theme.dark = true;
-  },
 };
 </script>
