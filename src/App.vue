@@ -1,17 +1,28 @@
 <template>
-  <div>
+  <v-app>
     <base-nav />
-    <router-view/>
-  </div>
+
+    <v-main>
+      <v-container
+        class="fill-height"
+        fluid
+      >
+        <router-view/>
+      </v-container>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 import BaseNav from '@/components/BaseNav.vue';
 
 export default {
-  name: 'DeskTop',
+  name: 'App',
   components: {
     BaseNav,
+  },
+  created() {
+    this.$vuetify.theme.dark = true;
   },
 };
 </script>
