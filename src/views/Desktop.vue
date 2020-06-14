@@ -1,7 +1,5 @@
 <template>
-  <div>
-    Desktop {{ blocks }}
-  </div>
+  <div></div>
 </template>
 
 <script>

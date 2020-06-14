@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import storeModule from '@/store/modules/transactions/';
+import storeModule from '@/store/modules/transactions';
 import baseMixins from '@/mixins/';
 import { createNamespacedHelpers } from 'vuex';
 import socketPlugin from '@/plugins/transactionsSocket';
