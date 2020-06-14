@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import NotFound from '@/views/NotFound.vue';
-import Desktop from '@/views/Desktop.vue';
 
 Vue.use(VueRouter);
 
@@ -14,7 +13,7 @@ const routes = [
   {
     path: '/',
     name: 'Desktop',
-    component: Desktop,
+    component: () => import('@/views/Desktop.vue'),
   },
   {
     path: '/transactions',
