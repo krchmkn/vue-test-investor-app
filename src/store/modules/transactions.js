@@ -28,10 +28,17 @@ export default {
           return el.addr;
         });
 
-        // Approximate exchange rate.
-        sum /= 10000;
-        state.data.unshift({ to, from, sum });
+        const exchangeRate = 10000;
+        sum /= exchangeRate;
         state.sum = sum;
+
+        const itemsLimit = 1000;
+        if (state.data.length < itemsLimit) {
+          state.data.unshift({ to, from, sum });
+        } else {
+          state.data.splice(state.data.length - 1, 1);
+          state.data.unshift({ to, from, sum });
+        }
       } catch (err) {
         // eslint-disable-next-line
         console.warn(err);
