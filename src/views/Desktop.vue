@@ -1,5 +1,9 @@
 <template>
-  <div></div>
+  <div>
+   <div v-for="item in blocks" :key="item.id">
+     {{ item }}
+   </div>
+  </div>
 </template>
 
 <script>
