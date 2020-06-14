@@ -76,6 +76,11 @@ const { mapState, mapMutations } = createNamespacedHelpers('transactions');
 export default {
   name: 'Transactions',
   mixins: [baseMixins],
+  data() {
+    return {
+      subscribed: false,
+    };
+  },
   computed: {
     ...mapState({
       status: (state) => state.status,
@@ -97,14 +102,20 @@ export default {
     ]),
     subscribe() {
       this.$socket.sendObj({ op: 'unconfirmed_sub' });
+      this.subscribed = true;
     },
     unsubscribe() {
       this.$socket.sendObj({ op: 'unconfirmed_unsub' });
+      this.subscribed = false;
     },
     clear() {
-      this.unsubscribe();
-      this.reset();
-      this.subscribe();
+      if (this.subscribed) {
+        this.unsubscribe();
+        this.reset();
+        this.subscribe();
+      } else {
+        this.reset();
+      }
     },
     onStatusChange(status) {
       if (status === 'start') {
