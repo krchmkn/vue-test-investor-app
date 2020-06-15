@@ -1,5 +1,17 @@
 <template>
   <div>
+    <v-btn text small @click.stop="subscribe()">
+      <v-icon left>mdi-play</v-icon> Start
+    </v-btn>
+
+    <v-btn text small @click.stop="unsubscribe()">
+      <v-icon left>mdi-pause</v-icon> Stop
+    </v-btn>
+
+    <v-btn text small @click.stop="clear()">
+      <v-icon left>mdi-autorenew</v-icon> Reset
+    </v-btn>
+
     <v-toolbar flat>
       <v-toolbar-title>Amount: {{ sum }} BTC</v-toolbar-title>
     </v-toolbar>
@@ -38,30 +50,6 @@
         </template>
       </v-simple-table>
     </div>
-
-    <v-bottom-navigation
-      :value="status"
-      @change="onStatusChange"
-      grow
-      color="primary"
-      shift
-      fixed
-    >
-      <v-btn value="start">
-        <span>Start</span>
-        <v-icon>mdi-play</v-icon>
-      </v-btn>
-
-      <v-btn value="stop">
-        <span>Stop</span>
-        <v-icon>mdi-pause</v-icon>
-      </v-btn>
-
-      <v-btn value="reset">
-        <span>Reset</span>
-        <v-icon>mdi-autorenew</v-icon>
-      </v-btn>
-    </v-bottom-navigation>
   </div>
 </template>
 
@@ -115,15 +103,6 @@ export default {
         this.subscribe();
       } else {
         this.reset();
-      }
-    },
-    onStatusChange(status) {
-      if (status === 'start') {
-        this.subscribe();
-      } else if (status === 'stop') {
-        this.unsubscribe();
-      } else if (status === 'reset') {
-        this.clear();
       }
     },
     onSocketMessage(message) {
