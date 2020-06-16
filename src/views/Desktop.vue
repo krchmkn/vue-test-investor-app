@@ -37,8 +37,6 @@
               &times;
             </span>
           </div>
-
-          {{ item }}
         </div>
       </vue-draggable-resizable>
     </div>
