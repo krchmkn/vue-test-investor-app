@@ -5,8 +5,10 @@
       colored-border
       color="deep-purple"
       elevation="2"
+      dense
     >
-      Press ESC to restore removed block;
+      You can drag, resize, remove and restore blocks.
+      Press ESC to restore removed block.
     </v-alert>
 
     <div class="wrap" @keyup.esc="onKeyUp" tabindex="0">
