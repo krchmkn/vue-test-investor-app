@@ -13,7 +13,7 @@
 
     <div class="wrap" @keyup.esc="onKeyUp" tabindex="0" ref="wrap">
       <vue-draggable-resizable
-        v-for="item in blocks"
+        v-for="item in blocksCopy"
         :key="item.id"
         :w="item.width"
         :h="item.height"
@@ -24,6 +24,7 @@
         :x="item.x"
         :y="item.y"
         :z="item.z"
+        :class="{[activeBlockClass]: item.z}"
         :class-name-active="activeBlockClass"
         @dragstop="(x, y) => onDragStop(item.id, x, y)"
         @resizestop="(x, y, w, h) => onResizeStop(item.id, x, y, w, h)"
@@ -69,6 +70,7 @@ export default {
   },
   created() {
     this.registerModule('desktop', storeModule);
+    this.blocksCopy = this.blocks;
   },
   methods: {
     ...mapMutations(['removeBlock', 'restoreBlock', 'updateBlock']),

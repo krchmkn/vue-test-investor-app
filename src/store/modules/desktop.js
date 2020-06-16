@@ -77,17 +77,19 @@ export default {
     updateBlock(state, {
       id, x, y, width, height,
     }) {
-      const index = state.blocks.findIndex((el) => el.id === id);
-      if (index === -1) {
-        return;
-      }
-      state.blocks[index] = {
-        ...state.blocks[index],
-        x,
-        y,
-        width: width || state.blocks[index].width,
-        height: height || state.blocks[index].height,
-      };
+      state.blocks = state.blocks.map((el) => {
+        if (el.id === id) {
+          return {
+            ...el,
+            x,
+            y,
+            z: 1,
+            width: width || el.width,
+            height: height || el.height,
+          };
+        }
+        return { ...el, z: 0 };
+      });
       storeBlocks(state.blocks);
     },
   },
