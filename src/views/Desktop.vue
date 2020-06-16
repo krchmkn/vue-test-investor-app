@@ -11,9 +11,10 @@
       Press ESC to restore removed block.
     </v-alert>
 
-    <div class="wrap" @keyup.esc="onKeyUp" tabindex="0">
+    <div class="wrap" @keyup.esc="onKeyUp" tabindex="0" ref="wrap">
       <vue-draggable-resizable
-        v-for="item in blocks" :key="item.id"
+        v-for="item in blocks"
+        :key="item.id"
         :w="item.width"
         :h="item.height"
         :parent="true"
@@ -23,9 +24,9 @@
         :x="item.x"
         :y="item.y"
         :z="item.z"
-        class-name-active="draggable-resizable--active"
-        @dragstop="onDragStop"
-        @resizestop="onResizeStop"
+        :class-name-active="activeBlockClass"
+        @dragstop="(x, y) => onDragStop(item.id, x, y)"
+        @resizestop="(x, y, w, h) => onResizeStop(item.id, x, y, w, h)"
       >
         <div class="block">
           <div class="block__title">
@@ -52,8 +53,12 @@ const { mapState, mapMutations } = createNamespacedHelpers('desktop');
 export default {
   name: 'Desktop',
   mixins: [baseMixins],
+  components: {
+    VueDraggableResizable,
+  },
   data() {
     return {
+      activeBlockClass: 'draggable-resizable--active',
       blocksCopy: [],
     };
   },
@@ -62,35 +67,24 @@ export default {
       blocks: (state) => state.blocks,
     }),
   },
-  components: {
-    VueDraggableResizable,
-  },
   created() {
     this.registerModule('desktop', storeModule);
   },
   methods: {
     ...mapMutations(['removeBlock', 'restoreBlock', 'updateBlock']),
-    onDragStop(x, y) {
-      this.updateBlock({
-        id: null, // TODO
-        x,
-        y,
-      });
-    },
-    onResizeStop(x, y, width, height) {
-      this.updateBlock({
-        id: null, // TODO
-        x,
-        y,
-        width,
-        height,
-      });
-    },
     remove(itemID) {
       this.removeBlock(itemID);
     },
     onKeyUp() {
       this.restoreBlock();
+    },
+    onDragStop(id, x, y) {
+      this.updateBlock({ id, x, y });
+    },
+    onResizeStop(id, x, y, width, height) {
+      this.updateBlock({
+        id, x, y, width, height,
+      });
     },
   },
 };

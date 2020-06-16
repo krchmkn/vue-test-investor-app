@@ -1,3 +1,6 @@
+const defaultWidth = 300;
+const defaultHeight = 100;
+
 class Block {
   constructor(id, title, width, height, x, y, z) {
     this.id = id;
@@ -10,20 +13,42 @@ class Block {
   }
 }
 
+const getBlocks = () => {
+  let blocks = localStorage.getItem('blocks');
+  if (blocks) {
+    try {
+      blocks = JSON.parse(blocks);
+    } catch (err) {
+      // eslint-disable-next-line
+      console.warn(err);
+    }
+  }
+
+  if (Array.isArray(blocks)) {
+    return blocks;
+  }
+
+  return Array.from({ length: 5 }, (v, k) => {
+    const title = `Block${k + 1}`;
+    const width = defaultWidth;
+    const height = defaultHeight;
+    const x = 0;
+    const y = k > 0 ? (height * k) : 0;
+    const z = 0;
+    return new Block(k, title, width, height, x, y, z);
+  });
+};
+
+const storeBlocks = (blocks) => {
+  localStorage.setItem('blocks', JSON.stringify(blocks));
+};
+
 export default {
   namespaced: true,
   state: {
     removedBlock: null,
     removedBlockIndex: null,
-    blocks: Array.from({ length: 5 }, (v, k) => {
-      const title = `Block${k + 1}`;
-      const width = 300;
-      const height = 100;
-      const x = 0;
-      const y = k > 0 ? (height * k) : 0;
-      const z = 0;
-      return new Block(k, title, width, height, x, y, z);
-    }),
+    blocks: getBlocks(),
   },
   mutations: {
     removeBlock(state, blockID) {
@@ -34,14 +59,20 @@ export default {
       state.removedBlock = state.blocks[index];
       state.removedBlockIndex = index;
       state.blocks.splice(index, 1);
+      storeBlocks(state.blocks);
     },
     restoreBlock(state) {
       if (!state.removedBlock || state.removedBlockIndex == null) {
         return;
       }
-      state.blocks.splice(state.removedBlockIndex, 0, state.removedBlock);
+      state.blocks.splice(state.removedBlockIndex, 0, {
+        ...state.removedBlock,
+        width: defaultWidth,
+        height: defaultHeight,
+      });
       state.removedBlock = null;
       state.removedBlockIndex = null;
+      storeBlocks(state.blocks);
     },
     updateBlock(state, {
       id, x, y, width, height,
@@ -54,9 +85,10 @@ export default {
         ...state.blocks[index],
         x,
         y,
-        width,
-        height,
+        width: width || state.blocks[index].width,
+        height: height || state.blocks[index].height,
       };
+      storeBlocks(state.blocks);
     },
   },
 };
