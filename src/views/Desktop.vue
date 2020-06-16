@@ -6,6 +6,7 @@
       color="deep-purple"
       elevation="2"
       dense
+      dismissible
     >
       You can drag, resize, remove and restore blocks.
       Press ESC to restore removed block.
