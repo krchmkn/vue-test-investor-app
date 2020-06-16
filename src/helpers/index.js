@@ -4,19 +4,11 @@ import {
   DEFAULT_BLOCK_HEIGHT,
 } from '@/constants/';
 import Block from '@/helpers/Block';
+import storage from '@/helpers/storage';
 
 // eslint-disable-next-line import/prefer-default-export
 export const getBlocks = () => {
-  let blocks = localStorage.getItem(STORAGE_KEY);
-  if (blocks) {
-    try {
-      blocks = JSON.parse(blocks);
-    } catch (err) {
-      // eslint-disable-next-line
-      console.warn(err);
-    }
-  }
-
+  const blocks = storage.getItem(STORAGE_KEY);
   if (Array.isArray(blocks)) {
     return blocks;
   }

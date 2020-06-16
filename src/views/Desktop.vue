@@ -52,6 +52,7 @@ import {
   DEFAULT_BLOCK_WIDTH,
   DEFAULT_BLOCK_HEIGHT,
 } from '@/constants/';
+import storage from '@/helpers/storage';
 
 export default {
   name: 'Desktop',
@@ -82,21 +83,26 @@ export default {
   methods: {
     storeBlocks(blocks) {
       const result = Array.isArray(blocks) ? blocks : this.blocks;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+      storage.setItem(STORAGE_KEY, result);
     },
     updateBlock(id, x, y, width, height) {
-      const blocks = this.blocks.map((el) => {
-        if (el.id === id) {
-          return {
-            ...el,
-            x,
-            y,
-            z: 1,
-            width: width || el.width,
-            height: height || el.height,
-          };
+      // eslint-disable-next-line prefer-const
+      let blocks = storage.getItem(STORAGE_KEY);
+      if (!Array.isArray(blocks)) {
+        blocks = [].concat(this.blocks);
+      }
+
+      blocks.forEach((block) => {
+        /* eslint-disable no-param-reassign */
+        if (block.id === id) {
+          block.x = x;
+          block.y = y;
+          block.z = 1;
+          block.width = width || block.width;
+          block.height = height || block.height;
+        } else {
+          block.z = 0;
         }
-        return { ...el, z: 0 };
       });
       this.storeBlocks(blocks);
     },
