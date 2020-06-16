@@ -97,8 +97,12 @@ export default {
           block.x = x;
           block.y = y;
           block.z = 1;
-          block.width = width || block.width;
-          block.height = height || block.height;
+          if (width) {
+            block.width = width;
+          }
+          if (height) {
+            block.height = height;
+          }
         } else {
           block.z = 0;
         }
@@ -169,7 +173,7 @@ export default {
 }
 
 .draggable-resizable--active {
-  z-index: 1 !important;
+  z-index: 2 !important;
 
   & .block__title {
     background: #673AB7;
