@@ -25,7 +25,6 @@
         :x="item.x"
         :y="item.y"
         :z="item.z"
-        :class="{[activeBlockClass]: item.z}"
         :class-name-active="activeBlockClass"
         @dragstop="(x, y) => updateBlock(item.id, x, y)"
         @resizestop="(x, y, w, h) => updateBlock(item.id, x, y, w, h)"

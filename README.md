@@ -1,4 +1,4 @@
-# vue-test-investor-app
+# vue-test-investor-app (work in progress)
 
 See [Demo](https://vue-test-investor-app.web.app/).
 
