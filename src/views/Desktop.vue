@@ -1,8 +1,40 @@
 <template>
-  <div>
-   <div v-for="item in blocks" :key="item.id">
-     {{ item }}
-   </div>
+  <div class="desktop">
+    <v-alert
+      border="left"
+      colored-border
+      color="deep-purple"
+      elevation="2"
+    >
+      Press ESC to restore removed block;
+    </v-alert>
+
+    <div class="wrap" @keyup.esc="onKeyUp" tabindex="0">
+      <vue-draggable-resizable
+        v-for="item in blocks" :key="item.id"
+        :w="item.width"
+        :h="item.height"
+        :parent="true"
+        :scale="0.5"
+        :minWidth="100"
+        :minHeight="50"
+        :x="item.x"
+        :y="item.y"
+        :z="item.z"
+        class-name-active="draggable-resizable--active"
+        @dragging="onDrag"
+        @resizing="onResize"
+      >
+        <div class="block">
+          <div class="block__title">
+            {{ item.title }}
+            <span class="block__close" @click.stop="remove(item.id)">
+              &times;
+            </span>
+          </div>
+        </div>
+      </vue-draggable-resizable>
+    </div>
   </div>
 </template>
 
@@ -10,19 +42,91 @@
 import storeModule from '@/store/modules/desktop';
 import baseMixins from '@/mixins/';
 import { createNamespacedHelpers } from 'vuex';
+import VueDraggableResizable from 'vue-draggable-resizable';
+import 'vue-draggable-resizable/dist/VueDraggableResizable.css';
 
-const { mapState } = createNamespacedHelpers('desktop');
+const { mapState, mapMutations } = createNamespacedHelpers('desktop');
 
 export default {
   name: 'Desktop',
   mixins: [baseMixins],
+  data() {
+    return {
+      blocksCopy: [],
+    };
+  },
   computed: {
     ...mapState({
       blocks: (state) => state.blocks,
     }),
   },
+  components: {
+    VueDraggableResizable,
+  },
   created() {
     this.registerModule('desktop', storeModule);
   },
+  methods: {
+    ...mapMutations(['removeBlock', 'restoreBlock']),
+    // onDrag(left, top) {
+    //   console.log('onDrag', left, top, this.blocks);
+    // },
+    // onResize(left, top, width, height) {
+    //   console.log('onDrag', left, top, width, height, this.blocks);
+    // },
+    remove(itemID) {
+      this.removeBlock(itemID);
+    },
+    onKeyUp() {
+      this.restoreBlock();
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.desktop {
+  height: 100%;
+}
+
+.wrap {
+  position: relative;
+  height: 100%;
+  outline: none;
+}
+
+.block {
+  background: #fff;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  &__title {
+    box-sizing: border-box;
+    padding: 5px 30px 5px 5px;
+    background: #EDE7F6;
+    font-size: 12px;
+    position: relative;
+  }
+
+  &__close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+.draggable-resizable--active {
+  z-index: 1 !important;
+
+  & .block__title {
+    background: #673AB7;
+    color: #fff;
+  }
+}
+</style>
