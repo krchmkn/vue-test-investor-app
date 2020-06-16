@@ -43,5 +43,20 @@ export default {
       state.removedBlock = null;
       state.removedBlockIndex = null;
     },
+    updateBlock(state, {
+      id, x, y, width, height,
+    }) {
+      const index = state.blocks.findIndex((el) => el.id === id);
+      if (index === -1) {
+        return;
+      }
+      state.blocks[index] = {
+        ...state.blocks[index],
+        x,
+        y,
+        width,
+        height,
+      };
+    },
   },
 };

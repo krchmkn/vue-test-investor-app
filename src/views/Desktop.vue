@@ -24,8 +24,8 @@
         :y="item.y"
         :z="item.z"
         class-name-active="draggable-resizable--active"
-        @dragging="onDrag"
-        @resizing="onResize"
+        @dragstop="onDragStop"
+        @resizestop="onResizeStop"
       >
         <div class="block">
           <div class="block__title">
@@ -69,13 +69,23 @@ export default {
     this.registerModule('desktop', storeModule);
   },
   methods: {
-    ...mapMutations(['removeBlock', 'restoreBlock']),
-    // onDrag(left, top) {
-    //   console.log('onDrag', left, top, this.blocks);
-    // },
-    // onResize(left, top, width, height) {
-    //   console.log('onDrag', left, top, width, height, this.blocks);
-    // },
+    ...mapMutations(['removeBlock', 'restoreBlock', 'updateBlock']),
+    onDragStop(x, y) {
+      this.updateBlock({
+        id: null, // TODO
+        x,
+        y,
+      });
+    },
+    onResizeStop(x, y, width, height) {
+      this.updateBlock({
+        id: null, // TODO
+        x,
+        y,
+        width,
+        height,
+      });
+    },
     remove(itemID) {
       this.removeBlock(itemID);
     },
