@@ -71,7 +71,6 @@ export default {
   },
   computed: {
     ...mapState({
-      status: (state) => state.status,
       sum: (state) => state.sum,
       data: (state) => state.data,
     }),

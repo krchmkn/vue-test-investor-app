@@ -12,9 +12,9 @@
       Press ESC to restore removed block.
     </v-alert>
 
-    <div class="wrap" @keyup.esc="onKeyUp" tabindex="0" ref="wrap">
+    <div class="wrap" @keyup.esc="restore" tabindex="0" ref="wrap">
       <vue-draggable-resizable
-        v-for="item in blocksCopy"
+        v-for="item in blocks"
         :key="item.id"
         :w="item.width"
         :h="item.height"
@@ -27,8 +27,8 @@
         :z="item.z"
         :class="{[activeBlockClass]: item.z}"
         :class-name-active="activeBlockClass"
-        @dragstop="(x, y) => onDragStop(item.id, x, y)"
-        @resizestop="(x, y, w, h) => onResizeStop(item.id, x, y, w, h)"
+        @dragstop="(x, y) => updateBlock(item.id, x, y)"
+        @resizestop="(x, y, w, h) => updateBlock(item.id, x, y, w, h)"
       >
         <div class="block">
           <div class="block__title">
@@ -37,6 +37,8 @@
               &times;
             </span>
           </div>
+
+          {{ item }}
         </div>
       </vue-draggable-resizable>
     </div>
@@ -44,51 +46,83 @@
 </template>
 
 <script>
-import storeModule from '@/store/modules/desktop';
-import baseMixins from '@/mixins/';
-import { createNamespacedHelpers } from 'vuex';
 import VueDraggableResizable from 'vue-draggable-resizable';
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css';
-
-const { mapState, mapMutations } = createNamespacedHelpers('desktop');
+import { getBlocks } from '@/helpers/';
+import {
+  STORAGE_KEY,
+  DEFAULT_BLOCK_WIDTH,
+  DEFAULT_BLOCK_HEIGHT,
+} from '@/constants/';
 
 export default {
   name: 'Desktop',
-  mixins: [baseMixins],
   components: {
     VueDraggableResizable,
   },
   data() {
     return {
       activeBlockClass: 'draggable-resizable--active',
-      blocksCopy: [],
+      blocks: [],
+      removedBlock: null,
+      removedBlockIndex: null,
     };
   },
   computed: {
-    ...mapState({
-      blocks: (state) => state.blocks,
-    }),
+    restoredBlockDimensions() {
+      return {
+        x: window.innerWidth / 2 - DEFAULT_BLOCK_WIDTH / 2,
+        y: window.innerHeight / 2 - DEFAULT_BLOCK_HEIGHT / 2,
+        width: DEFAULT_BLOCK_WIDTH,
+        height: DEFAULT_BLOCK_HEIGHT,
+      };
+    },
   },
   created() {
-    this.registerModule('desktop', storeModule);
-    this.blocksCopy = this.blocks;
+    this.blocks = getBlocks();
   },
   methods: {
-    ...mapMutations(['removeBlock', 'restoreBlock', 'updateBlock']),
-    remove(itemID) {
-      this.removeBlock(itemID);
-      this.blocksCopy = this.blocks;
+    storeBlocks(blocks) {
+      const result = Array.isArray(blocks) ? blocks : this.blocks;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
     },
-    onKeyUp() {
-      this.restoreBlock();
-    },
-    onDragStop(id, x, y) {
-      this.updateBlock({ id, x, y });
-    },
-    onResizeStop(id, x, y, width, height) {
-      this.updateBlock({
-        id, x, y, width, height,
+    updateBlock(id, x, y, width, height) {
+      const blocks = this.blocks.map((el) => {
+        if (el.id === id) {
+          return {
+            ...el,
+            x,
+            y,
+            z: 1,
+            width: width || el.width,
+            height: height || el.height,
+          };
+        }
+        return { ...el, z: 0 };
       });
+      this.storeBlocks(blocks);
+    },
+    remove(blockID) {
+      const index = this.blocks.findIndex((el) => el.id === blockID);
+      if (index === -1) {
+        return;
+      }
+      this.removedBlock = this.blocks[index];
+      this.removedBlockIndex = index;
+      this.blocks.splice(index, 1);
+      this.storeBlocks();
+    },
+    restore() {
+      if (!this.removedBlock) {
+        return;
+      }
+      this.blocks.splice(this.removedBlockIndex, 0, {
+        ...this.removedBlock,
+        ...this.restoredBlockDimensions,
+      });
+      this.removedBlock = null;
+      this.removedBlockIndex = null;
+      this.storeBlocks();
     },
   },
 };

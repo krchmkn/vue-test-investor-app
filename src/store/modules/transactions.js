@@ -1,7 +1,6 @@
 export default {
   namespaced: true,
   state: {
-    status: 'stop',
     sum: 0,
     data: [],
   },
