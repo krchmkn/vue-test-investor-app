@@ -67,6 +67,8 @@ export default {
       }
       state.blocks.splice(state.removedBlockIndex, 0, {
         ...state.removedBlock,
+        x: window.innerWidth / 2 - defaultWidth / 2,
+        y: window.innerHeight / 2 - defaultHeight / 2,
         width: defaultWidth,
         height: defaultHeight,
       });

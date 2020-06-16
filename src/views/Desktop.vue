@@ -77,6 +77,7 @@ export default {
     ...mapMutations(['removeBlock', 'restoreBlock', 'updateBlock']),
     remove(itemID) {
       this.removeBlock(itemID);
+      this.blocksCopy = this.blocks;
     },
     onKeyUp() {
       this.restoreBlock();
