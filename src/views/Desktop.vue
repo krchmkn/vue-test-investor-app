@@ -10,6 +10,7 @@
     >
       You can drag, resize, remove and restore blocks.
       Press ESC to restore removed block.
+      Blocks positions and dimensions restored after page refresh.
     </v-alert>
 
     <div class="wrap" @keyup.esc="restore" tabindex="0" ref="wrap">
@@ -81,8 +82,22 @@ export default {
   },
   methods: {
     storeBlocks(blocks) {
-      const result = Array.isArray(blocks) ? blocks : this.blocks;
-      storage.setItem(STORAGE_KEY, result);
+      storage.setItem(STORAGE_KEY, blocks);
+    },
+    removeBlockFromStore(index) {
+      // eslint-disable-next-line prefer-const
+      let blocks = storage.getItem(STORAGE_KEY);
+      blocks.splice(index, 1);
+      this.storeBlocks(blocks);
+    },
+    restoreBlockInStore() {
+      // eslint-disable-next-line prefer-const
+      let blocks = storage.getItem(STORAGE_KEY);
+      blocks.splice(this.removedBlockIndex, 0, {
+        ...this.removedBlock,
+        ...this.restoredBlockDimensions,
+      });
+      this.storeBlocks(blocks);
     },
     updateBlock(id, x, y, width, height) {
       // eslint-disable-next-line prefer-const
@@ -117,7 +132,7 @@ export default {
       this.removedBlock = this.blocks[index];
       this.removedBlockIndex = index;
       this.blocks.splice(index, 1);
-      this.storeBlocks();
+      this.removeBlockFromStore(index);
     },
     restore() {
       if (!this.removedBlock) {
@@ -127,9 +142,9 @@ export default {
         ...this.removedBlock,
         ...this.restoredBlockDimensions,
       });
+      this.restoreBlockInStore();
       this.removedBlock = null;
       this.removedBlockIndex = null;
-      this.storeBlocks();
     },
   },
 };
